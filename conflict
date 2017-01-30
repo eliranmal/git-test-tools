@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+(( $# < 2 )) && {
+	echo "usage: conflict <my-branch> <their-branch>"
+	exit 1
+}
+
+mine="$1"
+theirs="$2"
+root="$(dirname "$0")/.."
+test_file_1="$root/conflict-test-1.txt"
+test_file_2="$root/conflict-test-2.txt"
+
+change() {
+	git checkout "$1" && {
+		uuid="$(uuidgen)"
+		echo "$2 $uuid" > "$test_file_1"
+		echo "$2 $uuid" > "$test_file_2"
+		git commit -am "$3"
+		git push
+	}
+}
+
+
+git checkout "$mine"
+
+change "$theirs" "theirs" "innocent change"
+change "$mine" "mine" "conflicting change"

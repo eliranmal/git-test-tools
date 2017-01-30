@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+(( $# < 1 )) && {
+	echo "usage: delete-branch <branch>"
+	exit 1
+}
+
+branch="$1"
+
+# go somewhere safe
+git checkout master
+# delete local branch
+git branch -D "$branch"
+# delete remote branch
+git push origin :"$branch"
